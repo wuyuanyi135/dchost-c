@@ -14,8 +14,8 @@ void irq_handler(void)
    if (GETBIT(status, REG_STATUS_RX_DR))
    {
       /* Data Ready */
-      uint16_t temperature[4];
-      _nrf24l01_read_rx((uint8_t *) temperature, 8);
+      uint16_t temperature[16];
+      _nrf24l01_read_rx((uint8_t *) temperature, 32);
       
       double tmp;
       for (uint8_t i; i<4;i++)
@@ -26,11 +26,11 @@ void irq_handler(void)
          tmp = 0;
          for (uint8_t j=0 ; j<11; j++)
          {
-            tmp += pow (2.0d, (double)j - 4.0d);  
-            printf ("%f\t",tmp);
+            tmp += pow (2.0d, (double)j - 4.0d) * GETBIT(temperature[i],j);  
          }
-         printf("\n");
+         printf("%lf:%x \t",tmp, temperature[i]);
       }
+      printf("\n");
    }
          
 }
@@ -38,25 +38,24 @@ void irq_handler(void)
 void configure_address (void)
 {
    nrf24l01_set_rxaddr (0,RX_ADDR_P0);
+   nrf24l01_set_rxaddr (1,RX_ADDR_P1);
    nrf24l01_set_txaddr (TX_ADDR);
 }
 
 void configure_isr(void)
 {
    int status = wiringPiISR(IRQ_PIN, INT_EDGE_FALLING,irq_handler); 
-   if (digitalRead (IRQ_PIN)==LOW)
+   /* Clear status first*/
+   if (status < 0)
    {
-      /* Clear status first*/
-      if (status < 0)
-      {
-         perror ("Failed to register ISR");
-         exit (1);
-      }
-      nrf24l01_clear_interrupt();
-      _nrf24l01_flush_rx();
-      _nrf24l01_flush_tx();
-      
+      perror ("Failed to register ISR");
+      exit (1);
    }
+   nrf24l01_clear_interrupt();
+   _nrf24l01_flush_rx();
+   _nrf24l01_flush_tx();
+   
+   
 }
 void setup (void)
 {
@@ -80,8 +79,12 @@ void setup (void)
    configure_address();
    //TODO dynamic length nrf24l01_set_dynamic_payload_length(0, ENABLE);
    configure_isr();
+      
+   nrf24l01_set_rx_payload_length(1,32);
+   //nrf24l01_set_en_aa(0,ENABLE);
+   nrf24l01_set_en_aa(1,ENABLE);
+   
    nrf24l01_power_up(ENABLE);
    nrf24l01_mode(MODE_RX);
-
    printf ("Configured\n");
 }

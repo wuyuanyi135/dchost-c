@@ -31,6 +31,7 @@
 #define REG_RX_ADDR_P0  (0x0A)
 #define REG_RX_ADDR_P1  (0x0B) 
 #define REG_TX_ADDR     (0x10)
+#define REG_RX_PW_P0    (0x11)
 #define REG_DYNPD       (0x1C)
 #define REG_FEATURE     (0x1D)
 #define REG_FEATURE_EN_DPL       (2)
@@ -44,8 +45,11 @@
 #define MODE_TX   (0)
 #define MODE_STANDBY (2)
 #define GETBIT(BYTE, BIT)  ((BYTE >> BIT) & 0x01)
+void nrf24l01_printall(void);
+void nrf24l01_set_en_aa (uint8_t channel, uint8_t state);
 /* TODO getter*/
 void nrf24l01_set_rx_payload_length ( uint8_t channel, uint8_t length);
+
 /* TODO close DPL */
 void nrf24l01_set_dynamic_payload_length ( uint8_t channel, uint8_t state);
 

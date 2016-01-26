@@ -9,6 +9,32 @@
 
 #define SPIXFER(BUF,LEN) wiringPiSPIDataRW(CHANNEL,BUF,LEN)
 #define CE(HIGHLOW)    digitalWrite (CE_PIN, HIGHLOW)
+void nrf24l01_printall(void)
+{
+   uint8_t regs[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x11, 0x12, 0x13, 0x14,0x15,0x16,0x17,0x1c,0x1d};
+   printf ("=========================\n");
+   for (int i = 0; i < sizeof(regs); i ++ )
+   {
+      printf ("Reg %x: %d\n",regs[i], _nrf24l01_get_reg(regs[i]));
+   }
+   printf ("TX ADDR: %llx\n", (long long) nrf24l01_get_txaddr());
+   
+   for (int i = 0; i <=5; i ++ )
+   {
+      printf ("RX ADDR%d: %llx\n",i,(long long) nrf24l01_get_rxaddr(i));
+   }
+   printf ("-------------------------\n");
+}
+
+void nrf24l01_set_en_aa (uint8_t channel, uint8_t state)
+{
+   _nrf24l01_mod_reg (REG_EN_AA, channel, state);
+}
+
+void nrf24l01_set_rx_payload_length( uint8_t channel, uint8_t length)
+{
+   _nrf24l01_set_reg (REG_RX_PW_P0 + channel, length);
+}
 void nrf24l01_set_dynamic_payload_length (uint8_t channel, uint8_t state)
 {
    _nrf24l01_mod_reg (REG_FEATURE, REG_FEATURE_EN_DPL, ENABLE);
