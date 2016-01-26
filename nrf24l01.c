@@ -1,16 +1,16 @@
 #include "nrf24l01.h"
 #include <stdint.h>
-#include <wiringPi.h>
-#include <wiringPiSPI.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "config.h"
 
-#define SPIXFER(BUF,LEN) wiringPiSPIDataRW(CHANNEL,BUF,LEN)
-#define CE(HIGHLOW)    digitalWrite (CE_PIN, HIGHLOW)
+const uint8_t nrf24l01_initial_regs[] = 	{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x1c, 0x1d};
+const uint8_t nrf24l01_initial_state[] = 	{0x08, 0x3f, 0x03, 0x03, 0x03, 0x02, 0x0f, 0x70, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
 void nrf24l01_printall(void)
 {
+	#ifndef FLAG_EMBED
    uint8_t regs[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x11, 0x12, 0x13, 0x14,0x15,0x16,0x17,0x1c,0x1d};
    printf ("=========================\n");
    for (int i = 0; i < sizeof(regs); i ++ )
@@ -24,6 +24,34 @@ void nrf24l01_printall(void)
       printf ("RX ADDR%d: %llx\n",i,(long long) nrf24l01_get_rxaddr(i));
    }
    printf ("-------------------------\n");
+	 #endif
+}
+
+void nrf24l01_reset(void)
+{
+	_nrf24l01_flush_rx();
+	_nrf24l01_flush_tx();
+	
+	for (uint32_t i = 0; i<sizeof(nrf24l01_initial_regs); i++)
+		_nrf24l01_set_reg ( nrf24l01_initial_regs[i], nrf24l01_initial_state[i]);
+}
+
+void nrf24l01_set_enable_rx (uint8_t channel, uint8_t state)
+{
+	_nrf24l01_mod_reg(REG_EN_RXADDR, channel, state);
+}
+
+void nrf24l01_set_retry_count (uint8_t count)
+{
+	uint8_t old = _nrf24l01_get_reg(REG_SETUP_RETR);
+	old = (old & ~(0x0f) ) | count;
+	_nrf24l01_set_reg(REG_SETUP_RETR, old);
+}
+void nrf24l01_set_retry_delay	(uint8_t	ARD)
+{
+	uint8_t old = _nrf24l01_get_reg(REG_SETUP_RETR);
+	old = (old & ~(0xf0) ) | ARD;
+	_nrf24l01_set_reg(REG_SETUP_RETR, old);	
 }
 
 void nrf24l01_set_en_aa (uint8_t channel, uint8_t state)

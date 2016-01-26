@@ -2,6 +2,7 @@
 #define  __NRF24L01_H__
 
 #include <stdint.h>
+#include "config.h"
 
 #define R_REGISTER   (0x00)
 #define W_REGISTER   (0x20)
@@ -21,6 +22,7 @@
 
 #define REG_EN_AA       (0x01)
 #define REG_EN_RXADDR   (0x02)
+#define REG_SETUP_RETR	(0x04)
 #define REG_STATUS      (0x07)
 #define REG_STATUS_RX_DR   (6)
 #define REG_STATUS_TX_DS   (5)
@@ -38,14 +40,23 @@
 #define REG_FEATURE_ACK_PAY      (1)
 #define REG_FEATURE_EN_DYN_ACK   (0)
 
-#define  ENABLE   (1)
-#define  DISABLE  (0)
 
 #define MODE_RX   (1)
 #define MODE_TX   (0)
 #define MODE_STANDBY (2)
 #define GETBIT(BYTE, BIT)  ((BYTE >> BIT) & 0x01)
+
+extern const uint8_t nrf24l01_initial_regs[]; 
+extern const uint8_t nrf24l01_initial_state[];
+
 void nrf24l01_printall(void);
+
+void nrf24l01_reset(void);
+void nrf24l01_set_enable_rx (uint8_t channel, uint8_t state);
+
+void nrf24l01_set_retry_count (uint8_t count);
+void nrf24l01_set_retry_delay	(uint8_t	ARD);
+
 void nrf24l01_set_en_aa (uint8_t channel, uint8_t state);
 /* TODO getter*/
 void nrf24l01_set_rx_payload_length ( uint8_t channel, uint8_t length);
