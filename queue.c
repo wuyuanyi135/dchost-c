@@ -20,10 +20,10 @@ uint32_t Enqueue(QueueParameter* Param,void* Source,int32_t Length)
 	{
 		offset = Param->UnitSize* ((Param->Count +Param->Offset) % Param->BufferSize);
 		pTail =(void*) ((int32_t)Param->QueueBuffer + offset);
-		Source = (void*) ((int32_t)Source + offset);
+		Source = (void*) ((int32_t)Source + + i * Param->UnitSize);				/* the offset is not the same as queue offset! */
 		memcpy(
-			pTail /*+ i * Param->UnitSize*/,
-			Source /*+ i * Param->UnitSize*/,
+			pTail,
+			Source,
 			Param->UnitSize
 			);
 		Param->Count ++;
