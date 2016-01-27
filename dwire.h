@@ -56,7 +56,8 @@ void _dwire_abort_tx (void);
 void _dwire_abort_rx (void);
 uint8_t _dwire_get_dynamic_length(void);
 void _dwire_read_rx (uint8_t* buffer, uint8_t length);
-
+void _dwire_mode (uint8_t mode);
 // double score is standard handler (clean packet, no need for post modification)
+//
 int32_t __dw_rpc_get_var(uint32_t reg_code, uint8_t *ret_buf);
 #endif
