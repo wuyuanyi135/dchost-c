@@ -44,7 +44,8 @@
 #define MODE_RX   (1)
 #define MODE_TX   (0)
 #define MODE_STANDBY (2)
-#define GETBIT(BYTE, BIT)  ((BYTE >> BIT) & 0x01)
+
+ 
 
 extern const uint8_t nrf24l01_initial_regs[]; 
 extern const uint8_t nrf24l01_initial_state[];

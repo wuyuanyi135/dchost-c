@@ -68,8 +68,6 @@ void nrf24l01_set_dynamic_payload_length (uint8_t channel, uint8_t state)
    _nrf24l01_mod_reg (REG_FEATURE, REG_FEATURE_EN_DPL, ENABLE);
    _nrf24l01_mod_reg (REG_DYNPD, channel, state);
    _nrf24l01_mod_reg (REG_EN_AA, channel, state);
-   
-
    /* activate */   
 }
 
