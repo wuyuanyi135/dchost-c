@@ -6,6 +6,7 @@ uint32_t Enqueue(QueueParameter* Param,void* Source,int32_t Length)
 {
 	//TAIL will not move until next call; TAIL always indicates the last element;
 	int32_t i;
+	int32_t offset;
 	void* pTail;
 	#ifdef Queue_RequireValidate
 	if(!QueueValidate(Param))
@@ -13,11 +14,18 @@ uint32_t Enqueue(QueueParameter* Param,void* Source,int32_t Length)
 	#endif
 	if(Param->Count  + Length > Param->BufferSize)
 		return Queue_Insufficiency;
-
+	
+	
 	for(i=0;i<Length;i++)
 	{
-		pTail =(void*) ((int32_t)Param->QueueBuffer + Param->UnitSize* ((Param->Count +Param->Offset) % Param->BufferSize));
-		memcpy((void*)((uint32_t)pTail + i * Param->UnitSize),Source,Param->UnitSize);
+		offset = Param->UnitSize* ((Param->Count +Param->Offset) % Param->BufferSize);
+		pTail =(void*) ((int32_t)Param->QueueBuffer + offset);
+		Source = (void*) ((int32_t)Source + offset);
+		memcpy(
+			pTail /*+ i * Param->UnitSize*/,
+			Source /*+ i * Param->UnitSize*/,
+			Param->UnitSize
+			);
 		Param->Count ++;
 	}
 	return Queue_Success;
