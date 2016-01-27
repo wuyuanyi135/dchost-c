@@ -39,4 +39,18 @@
 #define TX_ADDR      (0xE0E1E2E3E4)
 
 #endif 
+
+//DWIRE CONFIG
+#define DW_TX_SIZE		(64)
+#define DW_RX_SIZE		(64)
+#define	DW_LOCAL_ADDR		(0x10)					/* only used in slave mode */
+
+#define DW_VAR_MAP_SIZE	(4)						/* auto var get/set handler map size */
+
+
+/* COMMON.h*/
+#define GETBIT(BYTE, BIT)  	((BYTE >> BIT) & 0x01)
+#define SETBIT(BYTE,BIT,VAL)		((BYTE & ~(0x01<<BIT)) | (0x01<<VAL))
+#define SETHIGH(BYTE,BIT)		(BYTE | (0x01<<BIT))
+#define SETLOW(BYTE,BIT)		(BYTE & ~(0x01<<BIT))
 #endif
