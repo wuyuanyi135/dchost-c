@@ -8,9 +8,9 @@
 #define W_REGISTER   (0x20)
 #define R_RX_PAYLOAD (0x61)
 #define W_TX_PAYLOAD (0xA0)
-#define FLUSH_TX  (0xE1)
-#define FLUSH_RX  (0xE2)
-
+#define FLUSH_TX     (0xE1)
+#define FLUSH_RX     (0xE2)
+#define R_RX_PL_WID  (0x60)  
 #define REG_CONFIG      (0x00)
 #define REG_CONFIG_MASK_RX_DR    (6)
 #define REG_CONFIG_MASK_TX_DS    (5)
@@ -90,7 +90,6 @@ void _nrf24l01_read_rx (uint8_t* buffer, uint8_t size);
 
 void _nrf24l01_flush_tx (void);
 void _nrf24l01_flush_rx (void);
-
-
+uint8_t _nrf24l01_read_rx_payload_width (void);
 
 #endif

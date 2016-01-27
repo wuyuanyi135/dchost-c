@@ -15,7 +15,17 @@ void irq_handler(void)
    {
       /* Data Ready */
       uint16_t temperature[16];
-      _nrf24l01_read_rx((uint8_t *) temperature, 32);
+
+      uint8_t rxlen;
+      rxlen = _nrf24l01_read_rx_payload_width();
+      if (rxlen > 32)
+      {
+        _nrf24l01_flush_rx();
+        printf("Problematic packet received with len: %d \n", rxlen);
+        return ; /* TODO not proper */
+      }
+      printf ("Got packet, len=%d\n",rxlen);
+      _nrf24l01_read_rx((uint8_t *) temperature, rxlen);
       
       double tmp;
       for (uint8_t i; i<4;i++)
@@ -81,9 +91,8 @@ void setup (void)
    configure_isr();
       
    nrf24l01_set_rx_payload_length(1,32);
-   //nrf24l01_set_en_aa(0,ENABLE);
-   nrf24l01_set_en_aa(1,ENABLE);
-   
+   //nrf24l01_set_en_aa(1,ENABLE);
+   nrf24l01_set_dynamic_payload_length(1, ENABLE);
    nrf24l01_power_up(ENABLE);
    nrf24l01_mode(MODE_RX);
    printf ("Configured\n");

@@ -231,3 +231,11 @@ void _nrf24l01_flush_rx (void)
    SPIXFER(&buf,1);
 }
 
+uint8_t _nrf24l01_read_rx_payload_width (void)
+{
+    uint8_t buf[2];
+    buf[0] = R_RX_PL_WID;
+    buf[1] = 0xff;
+    SPIXFER((unsigned char*)&buf,2);
+    return buf[1];    
+}
