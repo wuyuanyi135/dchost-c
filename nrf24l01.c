@@ -162,6 +162,8 @@ void nrf24l01_mode (uint8_t mode)
    CE(LOW);
    _nrf24l01_mod_reg( REG_CONFIG, REG_CONFIG_PRIM_RX, mode);
    CE(HIGH);
+	 
+	 //for (uint32_t i = 0; i <130 * 48;i ++);
 }
 
 void nrf24l01_clear_interrupt (void)

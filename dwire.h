@@ -21,6 +21,7 @@
 
 #define DW_FLAGS_TX_READY		(0)
 #define DW_FLAGS_RX_READY		(1)
+#define DW_FLAGS_LATE_SEND	(2)
 
 #define DW_RPC_FAILED				(0)
 #define DW_RPC_OK						(1)
@@ -35,13 +36,16 @@ extern volatile uint32_t dwire_tx_fail_counter;
 extern volatile uint32_t dwire_tx_fail_max;
 extern void (*dwire_rpc_call_callback)(uint8_t*, uint32_t);
 extern QueueParameter dwire_tx_queue, dwire_rx_queue;
+extern volatile uint32_t dwire_late_send_time;
 // return ret_buf len, return negative number to enable auto handle
 __DWEVT int32_t dwire_rpc_handler(uint8_t from, uint8_t to, uint8_t rpc_code, uint8_t* rpc_args, uint32_t rpc_args_len, uint8_t* ret_buf);
 int32_t _dwire_rpc_handler(uint8_t from, uint8_t to, uint8_t rpc_code, uint8_t* rpc_args, uint32_t rpc_args_len, uint8_t* ret_buf);
 
 void dwire_init (void);
 void dwire_rpc_machine(void);
-
+ 
+void dwire_rpc_timed_machine(void);
+ 
 //remote call on the same physical channel
 int32_t dwire_rpc_call(uint8_t remote_address, uint8_t rpc_code, uint8_t * rpc_args,  uint32_t rpc_args_len, void (*callback)(uint8_t*, uint32_t));
 

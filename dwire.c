@@ -11,6 +11,9 @@ volatile uint8_t dwire_rx_buffer[DW_RX_SIZE];
 volatile uint32_t dwire_machine_flags;
 volatile uint32_t dwire_tx_fail_counter;
 volatile uint32_t dwire_tx_fail_max = 0;
+volatile uint32_t dwire_late_send_time = 0;
+
+extern uint32_t msTick;
 void (*dwire_rpc_call_callback)(uint8_t*, uint32_t);			/* TODO: check if NULL */
 
 QueueParameter dwire_tx_queue, dwire_rx_queue;
@@ -69,6 +72,7 @@ void dwire_init (void)
 
 void dwire_rpc_machine(void)
 {
+
 	if (GETBIT(dwire_machine_flags, DW_FLAGS_RX_READY))
 	{
 		/* received packet */
@@ -109,15 +113,33 @@ void dwire_rpc_machine(void)
 		{
 			dwire_tx_queue.Count = send_length;
 			dwire_tx_queue.Offset = 0;
-		
+			
+			
 			SETHIGH(dwire_machine_flags, DW_FLAGS_TX_READY);
 			SETLOW(dwire_machine_flags, DW_FLAGS_RX_READY);
+			#ifdef FLAG_EMBED
+				extern uint32_t msTick;
+				dwire_late_send_time = msTick + 1;
+				SETHIGH(dwire_machine_flags, DW_FLAGS_LATE_SEND);
+			#else
+				delay(1);				/* delay 1 ms	*/
+				_dwire_notify_send();
+			#endif
+			
 		}
 	}
 	
 }
-
-
+#ifdef FLAG_EMBED
+void dwire_rpc_timed_machine(void)
+{
+	if (GETBIT(dwire_machine_flags, DW_FLAGS_LATE_SEND) && dwire_late_send_time < msTick && msTick - dwire_late_send_time < 100000)
+	{
+		_dwire_notify_send();
+		SETLOW(dwire_machine_flags, DW_FLAGS_LATE_SEND);
+	}
+}
+#endif
 int32_t dwire_rpc_call(uint8_t remote_address, uint8_t rpc_code, uint8_t * rpc_args,  uint32_t rpc_args_len, void (*callback)(uint8_t*, uint32_t))
 {
 	/*if ((dwire_machine_flags >> DW_FLAGS_TXDS) & 0x01)
