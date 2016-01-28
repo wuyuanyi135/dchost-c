@@ -177,6 +177,7 @@ int32_t dwire_rpc_call(uint8_t remote_address, uint8_t rpc_code, uint8_t * rpc_a
 			break;
 		}
 	}
+    SETHIGH(dwire_machine_flags, DW_FLAGS_TX_READY);
 	dwire_rpc_call_callback = callback;
 	_dwire_notify_send();
     return dwire_tx_queue.Count;
@@ -208,7 +209,6 @@ __DWEVT void _dwire_txds_handler(void)
 		/* tx completed */
 		
 	}
-
     SETLOW(dwire_machine_flags, DW_FLAGS_TX_READY);				/*dwire_machine_flags &= ~( 1 << DW_FLAGS_TX_READY);  remove tx ready flag */
     _dwire_mode(MODE_RX);
 }
