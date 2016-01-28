@@ -12,6 +12,7 @@ volatile uint32_t dwire_machine_flags;
 volatile uint32_t dwire_tx_fail_counter;
 volatile uint32_t dwire_tx_fail_max = 0;
 volatile uint32_t dwire_late_send_time = 0;
+volatile uint32_t dwire_notify_send_time = 0;
 
 extern uint32_t msTick;
 void (*dwire_rpc_call_callback)(uint8_t*, uint32_t);			/* TODO: check if NULL */
@@ -97,6 +98,7 @@ void dwire_rpc_machine(void)
 		Dequeue(&dwire_rx_queue, &_rpc, args_length);
 		int32_t send_length = _dwire_rpc_handler(packet_from, packet_to, _rpc, packet_args, args_length, (uint8_t*)dwire_tx_buffer);	/* dangerous operation */
 		
+		free (packet_args);
 		if (send_length > DW_TX_SIZE)
 		{
 			/* send error message (tx buffer overflow ) */
@@ -196,12 +198,14 @@ __DWEVT void _dwire_txds_handler(void)
 	{
 		Dequeue(&dwire_tx_queue, tx, 32);
 		_dwire_send((void*)tx, 32);
+		_dwire_mode (MODE_TX);
         return ;
 	}
 	else if (count > 0) 
 	{
 		Dequeue(&dwire_tx_queue, tx, count);
-		_dwire_send((void*)tx, count);		
+		_dwire_send((void*)tx, count);	
+		_dwire_mode (MODE_TX);		
 	}
 	else /* if (count ==0) */
 	{
@@ -227,7 +231,7 @@ __DWEVT void _dwire_maxrt_handler(void)
     {
         return;
     }
-    
+    dwire_tx_fail_counter = 0;
     _dwire_abort_tx();
     _dwire_mode(MODE_RX);
 }
