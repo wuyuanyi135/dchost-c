@@ -225,10 +225,15 @@ __DWEVT void _dwire_maxrt_handler(void)
 	dwire_tx_fail_counter ++ ;				/* count fail transmition */
 	
 	if ( dwire_tx_fail_max == 0 )			/* infinite retransmit */
+    {
+        _dwire_mode(MODE_TX);
 		return;
+    }
 	
 	if ( dwire_tx_fail_max >= dwire_tx_fail_counter)
     {
+
+        _dwire_mode(MODE_TX);
         return;
     }
     dwire_tx_fail_counter = 0;
