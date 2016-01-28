@@ -6,6 +6,7 @@
 
 #include <stdint.h>
 
+#define RPC_CMD_REPLY	(0x0e)
 #define RPC_CMD_ALIVE	(0x0f)			/* test if this device is alive */
 #define RPC_GET_VAR		(0x0a)
 #define RPC_SET_VAR		(0x0b)
@@ -35,8 +36,8 @@ extern volatile uint32_t dwire_tx_fail_max;
 extern void (*dwire_rpc_call_callback)(uint8_t*, uint32_t);
 extern QueueParameter dwire_tx_queue, dwire_rx_queue;
 // return ret_buf len, return negative number to enable auto handle
-__DWEVT int32_t dwire_rpc_handler(uint8_t rpc_code, uint8_t* rpc_args, uint32_t rpc_args_len, uint8_t* ret_buf);
-int32_t _dwire_rpc_handler(uint8_t rpc_code, uint8_t* rpc_args, uint32_t rpc_args_len, uint8_t* ret_buf);
+__DWEVT int32_t dwire_rpc_handler(uint8_t from, uint8_t to, uint8_t rpc_code, uint8_t* rpc_args, uint32_t rpc_args_len, uint8_t* ret_buf);
+int32_t _dwire_rpc_handler(uint8_t from, uint8_t to, uint8_t rpc_code, uint8_t* rpc_args, uint32_t rpc_args_len, uint8_t* ret_buf);
 
 void dwire_init (void);
 void dwire_rpc_machine(void);
