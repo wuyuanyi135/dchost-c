@@ -161,27 +161,31 @@ int32_t dwire_rpc_call(uint8_t remote_address, uint8_t rpc_code, uint8_t * rpc_a
 __DWEVT void _dwire_txds_handler(void)
 {
 	if ( GETBIT(dwire_machine_flags,DW_FLAGS_TX_READY) == 0 )				/* tx not ready, exit*/
-		return;
+    {
+        /* possibly last packet has been transferred, and so enter here */
+        _dwire_mode(MODE_RX);
+        return;
+    }
 	uint8_t tx[32];
 	int32_t count = dwire_tx_queue.Count;
 	if (count > 32)
 	{
-        _dwire_mode(MODE_TX);
 		Dequeue(&dwire_tx_queue, tx, 32);
 		_dwire_send((void*)tx, 32);
+        return ;
 	}
 	else if (count > 0) 
 	{
-        _dwire_mode(MODE_TX);
 		Dequeue(&dwire_tx_queue, tx, count);
 		_dwire_send((void*)tx, count);		
 	}
 	else /* if (count ==0) */
 	{
 		/* tx completed */
-		SETLOW(dwire_machine_flags, DW_FLAGS_TX_READY);				/*dwire_machine_flags &= ~( 1 << DW_FLAGS_TX_READY);  remove tx ready flag */
 		
 	}
+
+    SETLOW(dwire_machine_flags, DW_FLAGS_TX_READY);				/*dwire_machine_flags &= ~( 1 << DW_FLAGS_TX_READY);  remove tx ready flag */
     _dwire_mode(MODE_RX);
 }
 
