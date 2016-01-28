@@ -33,5 +33,9 @@
 #define SETBIT(BYTE,BIT,VAL)		((BYTE & ~(0x01<<BIT)) | (0x01<<VAL))
 #define SETHIGH(BYTE,BIT)		(BYTE = (BYTE | (0x01<<BIT)))
 #define SETLOW(BYTE,BIT)		(BYTE = (BYTE & ~(0x01<<BIT)))
-#define __delayus(t)            //delayMicroseconds(t)
+#ifdef FLAG_EMBED
+	#define __delayus(t)            for(uint32_t i=0;i<t*48;i++)
+#else
+	#define __delayus(t)            delayMicroseconds(t)
+#endif
 #endif

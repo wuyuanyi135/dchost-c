@@ -32,6 +32,7 @@ void irq_handler(void)
        printf ("maxrt! %d\n", dwire_tx_fail_counter);
    } 
          
+//   dwire_rpc_machine();         /* dont do this in embed platform */
 }
 
 void configure_address (void)
@@ -82,6 +83,8 @@ void setup (void)
    //TODO dynamic length nrf24l01_set_dynamic_payload_length(0, ENABLE);
    configure_isr();
       
+   nrf24l01_set_retry_count(15);
+   nrf24l01_set_retry_delay(3);
    nrf24l01_set_rx_payload_length(1,32);
    nrf24l01_set_en_aa(0,ENABLE);
    nrf24l01_set_en_aa(1,ENABLE);
