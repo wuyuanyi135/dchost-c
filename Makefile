@@ -7,10 +7,9 @@ LDFLAGS = -lwiringPi -lm -g
 .phony: clean all
 all: main
 
-main: nrf24l01.o app.o main.o
-	$(LD) $(LDFLAGS) $^ -o $@
-
-main_dwire: nrf24l01.o app_dwire.o main.o dwire.o queue.o
+#main: nrf24l01.o app.o main.o
+#	$(LD) $(LDFLAGS) $^ -o $@
+main: nrf24l01.o app_dwire.o main.o dwire.o queue.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 queue.o: queue.c

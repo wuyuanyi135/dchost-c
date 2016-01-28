@@ -12,8 +12,10 @@ int main (int argc, char** argv)
    while (1)
    {
 
-      nrf24l01_printall();
-      delay(5000);
+       delay(1000);
+
+       
    }
+
    return 0;
 }
