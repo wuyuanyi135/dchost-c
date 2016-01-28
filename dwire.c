@@ -41,8 +41,9 @@ int32_t _dwire_rpc_handler(uint8_t from, uint8_t to, uint8_t rpc_code, uint8_t* 
 		case RPC_CMD_ALIVE:				/* alive handler */
 			ret_buf[0] = DW_LOCAL_ADDR;
 			ret_buf[1] = from;
-			ret_buf[2] = RPC_ACK;
-			return 3;
+			ret_buf[2] = RPC_CMD_REPLY;
+			ret_buf[3] = RPC_ACK;
+			return 4;
 		
 		case RPC_GET_VAR:
 			len = __dw_rpc_get_var(*(int32_t*)rpc_args,ret_buf);
@@ -51,9 +52,10 @@ int32_t _dwire_rpc_handler(uint8_t from, uint8_t to, uint8_t rpc_code, uint8_t* 
 		default:
 			ret_buf[0] = DW_LOCAL_ADDR;
 			ret_buf[1] = from;
-			ret_buf[2] = RPC_NACK;
-			ret_buf[3] = RPC_EXCEPTION_NOT_FOUND;
-			return 4;	
+			ret_buf[2] = RPC_CMD_REPLY;
+			ret_buf[3] = RPC_NACK;
+			ret_buf[4] = RPC_EXCEPTION_NOT_FOUND;
+			return 5;	
 	}
 }
 
