@@ -23,6 +23,7 @@
 #define REG_EN_AA       (0x01)
 #define REG_EN_RXADDR   (0x02)
 #define REG_SETUP_RETR	(0x04)
+#define REG_RF_CH       (0x05)
 #define REG_STATUS      (0x07)
 #define REG_STATUS_RX_DR   (6)
 #define REG_STATUS_TX_DS   (5)
@@ -50,6 +51,7 @@
 extern const uint8_t nrf24l01_initial_regs[]; 
 extern const uint8_t nrf24l01_initial_state[];
 
+void nrf24l01_rfchannel(uint8_t channel);
 void nrf24l01_printall(void);
 
 void nrf24l01_reset(void);
