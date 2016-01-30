@@ -8,6 +8,26 @@
 const uint8_t nrf24l01_initial_regs[] = 	{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x1c, 0x1d};
 const uint8_t nrf24l01_initial_state[] = 	{0x08, 0x3f, 0x03, 0x03, 0x03, 0x02, 0x0f, 0x70, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
+void nrf24l01_set_autoack(uint8_t channel, uint8_t* payload, uint8_t size)
+{
+	uint8_t buf[33];
+	buf[0] = W_ACK_PAYLOAD | channel;
+	memcpy (buf+1,payload,size);
+	SPIXFER(buf,size+1);
+}
+
+void nrf24l01_reuse_tx (void)
+{
+	uint8_t buf;
+	buf = REUSE_TX_PL;
+	SPIXFER((unsigned char*)&buf,1);
+}
+
+void nrf24l01_set_feature (uint8_t feature, uint8_t state)
+{
+		_nrf24l01_mod_reg (REG_FEATURE, feature,state);
+}
+
 void nrf24l01_rfchannel(uint8_t channel)
 {
     _nrf24l01_set_reg(REG_RF_CH, channel);
@@ -165,7 +185,7 @@ void nrf24l01_mode (uint8_t mode)
    }
    
    CE(LOW);
-   _nrf24l01_mod_reg( REG_CONFIG, REG_CONFIG_PRIM_RX, mode);
+	 _nrf24l01_mod_reg( REG_CONFIG, REG_CONFIG_PRIM_RX, mode);
    CE(HIGH);
 
    if (mode == MODE_TX)

@@ -6,8 +6,10 @@
 
 #define R_REGISTER   (0x00)
 #define W_REGISTER   (0x20)
+#define REUSE_TX_PL	 (0xE3)
 #define R_RX_PAYLOAD (0x61)
 #define W_TX_PAYLOAD (0xA0)
+#define	W_ACK_PAYLOAD	(0xA8)
 #define FLUSH_TX     (0xE1)
 #define FLUSH_RX     (0xE2)
 #define R_RX_PL_WID  (0x60)  
@@ -44,6 +46,7 @@
 
 #define MODE_RX   (1)
 #define MODE_TX   (0)
+#define MODE_TX_PULSE (MODE_TX)
 #define MODE_STANDBY (2)
 
  
@@ -51,6 +54,9 @@
 extern const uint8_t nrf24l01_initial_regs[]; 
 extern const uint8_t nrf24l01_initial_state[];
 
+void nrf24l01_set_autoack(uint8_t channel, uint8_t* payload, uint8_t size);
+void nrf24l01_reuse_tx (void);
+void nrf24l01_set_feature (uint8_t feature, uint8_t state);
 void nrf24l01_rfchannel(uint8_t channel);
 void nrf24l01_printall(void);
 
